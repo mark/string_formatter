@@ -1,0 +1,41 @@
+StringFormatter is a method for defining custom strf-style methods for your object.
+
+Example:
+
+class PersonFormatter < StringFormatter
+  
+  f { |p| p.first_name }
+  F { |p| p.first_name.upcase }
+  l { |p| p.last_name  }
+  pipe { |p| 'PIPE' }
+  
+end
+
+class UpcaseFormatter < StringFormatter
+  
+  f { |p| p.first_name.upcase }
+  l { |p| p.last_name.upcase  }
+  
+end
+
+class Person
+  attr_accessor :first_name, :last_name
+
+  define_format_string :strf,   :with => PersonFormatter
+  define_format_string :strfup, :with => UpcaseFormatter
+  
+  def initialize(*names)
+    @first_name, @last_name = names
+  end
+  
+end
+
+p = Person.new("Bob", "Smith")
+
+p.strf('%l, %f %|')
+# => "Smith, Bob PIPE"
+
+p.strfup('%l, %f')
+# => "SMITH, BOB"
+
+You can define definitions for lower case characters, upper case characters, and punctuation marks.  The method for lower and upper case characters is the character itself, and the punctuation marks have specific names for each.
