@@ -91,4 +91,22 @@ describe StringFormatter do
     end
   end
 
+  describe "Multicharacter formatters" do
+
+    class MulticharDummy
+      include Formattable
+      class MulticharFormatter < StringFormatter
+        foo { |d| "FOO" }
+      end
+      
+      define_format_string :format, with: MulticharFormatter
+    end
+
+    it "should allow longer format sequences" do
+      MulticharDummy.new.format("%foo").must_equal "FOO"
+    end
+
+  end
+
+
 end

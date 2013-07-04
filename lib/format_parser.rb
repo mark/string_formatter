@@ -1,12 +1,12 @@
 class FormatParser
 
-  #############
-  #           #
-  # Constants #
-  #           #
-  #############
+  ################
+  #              #
+  # Declarations #
+  #              #
+  ################
   
-  STRING_FORMAT_REGEX = /[^%]+|%./
+  attr_reader :formatter
 
   ###############
   #             #
@@ -25,15 +25,33 @@ class FormatParser
   ####################
   
   def parse(string)
-    Array.new.tap do |parsed|
-      string.scan STRING_FORMAT_REGEX do |match|
-        parsed << if match[0] == '%'
-          Array match[1..-1]
-        else
-          match
-        end
+    split_string = string.scan(string_format_regex)
+
+    split_string.map { |match| extract_escape(match) }
+  end
+
+  protected
+
+    def extract_escape(match)
+      if match[0]
+        match[0]
+      else
+        Array( match[1..-1])
       end
     end
-  end
+
+    def multichar_sequences
+      formatter.escape_sequences.select { |seq| seq.length > 1 }
+    end
+
+    def escape_regex_fragment
+      sorted_sequences = multichar_sequences.sort_by(&:length).reverse
+      components = sorted_sequences << '.'
+      components.join '|'
+    end
+
+    def string_format_regex
+      /([^%]+)|%(#{ escape_regex_fragment })/
+    end
 
 end

@@ -111,6 +111,10 @@ class StringFormatter
     escape_method ? escape_method[object] : format_string
   end
   
+  def escape_sequences
+    self.class.escapes.keys
+  end
+    
   def format(object, format_string)
     parsed_string = parser.parse(format_string)
 
