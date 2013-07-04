@@ -123,12 +123,16 @@ class StringFormatter
       self.class.escapes.keys
     end
     
+    def evaluations
+      self.class.escapes
+    end
+
     def evaluator
-      @evaluator ||= FormatEvaluator.new(self)
+      @evaluator ||= FormatEvaluator.new(evaluations)
     end
 
     def parser
-      @parser ||= FormatParser.new(self.escape_sequences)
+      @parser ||= FormatParser.new(escape_sequences)
     end
 
 end

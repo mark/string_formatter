@@ -6,7 +6,7 @@ class FormatEvaluator
   #              #
   ################
   
-  attr_reader :formatter
+  attr_reader :evaluations
 
   ###############
   #             #
@@ -14,8 +14,8 @@ class FormatEvaluator
   #             #
   ###############
   
-  def initialize(formatter)
-    @formatter = formatter
+  def initialize(evaluations)
+    @evaluations = evaluations
   end
 
   ####################
@@ -34,6 +34,14 @@ class FormatEvaluator
 
   protected
 
+    def behavior_for(format)
+      format = format.to_s
+      
+      evaluations.fetch(format) do
+        evaluations[format] = ->(obj) { format }
+      end
+    end
+
     def evaluate_component(object, component)
       if component.kind_of? String
         component
@@ -45,7 +53,9 @@ class FormatEvaluator
     end
 
     def evaluate_format(object, format, options = nil)
-      formatter.escape(object, format)
+      behavior = behavior_for(format)
+
+      behavior[object]
     end
 
 end

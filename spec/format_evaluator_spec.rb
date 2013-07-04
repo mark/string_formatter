@@ -2,15 +2,16 @@ require 'spec_helper'
 
 describe FormatEvaluator do
 
-  class DummyFormatter
-    def escape(object, char)
-      "<#{char}>"
-    end
+  let(:keys) { %w(foo bar a) }
+
+  let(:evaluations) do
+    { 'a'   => ->(obj) { "<a>"   },
+      'foo' => ->(obj) { "<foo>" },
+      'bar' => ->(obj) { "<bar>" }
+    }
   end
 
-  let(:formatter) { DummyFormatter.new }
-
-  subject { FormatEvaluator.new(formatter) }
+  subject { FormatEvaluator.new(evaluations) }
 
   it "should pass through strings" do
     subject.evaluate(nil, ['foo']).must_equal "foo"
@@ -30,6 +31,14 @@ describe FormatEvaluator do
 
   it "should handle multichar formats" do
     subject.evaluate(nil, [['foo']]).must_equal "<foo>"
+  end
+
+  describe "Undefined behaviors" do
+    let(:evaluations) { Hash.new }
+
+    it "should return the escape as the text when not defined" do
+      subject.evaluate(nil, [['a']]).must_equal 'a'
+    end
   end
 
 end
