@@ -31,9 +31,9 @@ module Formattable
         end
       end
 
-      def formatter_class(superclass, definition)
-        if definition
-          Class.new(superclass, &definition)
+      def formatter_class(superclass, inline_definition)
+        if inline_definition
+          Class.new(superclass, &inline_definition)
         else
           superclass
         end
