@@ -7,6 +7,8 @@ describe StringFormatter do
     F { |p| p.first_name.upcase }
     l { |p| p.last_name  }
 
+    punctuation
+    
     pipe { |p| 'PIPE' }
   end
 

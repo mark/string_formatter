@@ -83,12 +83,16 @@ class StringFormatter
     if str.length == 1
       @escapes ||= {}
       @escapes[str] = block
-    elsif SPECIAL_CHARACTER_FORMATS[str]
+    elsif @parsing_punctuation && SPECIAL_CHARACTER_FORMATS[str]
       @escapes ||= {}
       @escapes[ SPECIAL_CHARACTER_FORMATS[str] ] = block
     else
       super
     end
+  end
+
+  def self.punctuation
+    @parsing_punctuation = true
   end
 
   ####################
