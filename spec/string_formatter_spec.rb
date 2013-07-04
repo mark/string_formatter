@@ -59,4 +59,30 @@ describe StringFormatter do
     end
   end
 
+  describe "Inline formatters" do
+
+    class InlineDummy
+      include Formattable
+
+      define_format_string :strf do
+        f { |d| "Foo" }
+      end
+
+      class InheritableFormatter < StringFormatter; a { |d| "Foo" }; end
+
+      define_format_string :strf2, with: InheritableFormatter do
+        b { |d| "Bar" }
+      end
+    end
+
+    it "should automtatically define a formatter class if a block is provided" do
+      InlineDummy.new.strf("%f").must_equal "Foo"
+    end
+
+    it "should inherit from the formatter provided with :with" do
+      skip
+      InlineDummy.new.strf2("%a %b").must_equal "Foo Bar"
+    end
+  end
+
 end

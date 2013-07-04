@@ -5,6 +5,10 @@ module Formattable
     def define_format_string(formatter_method, options = {}, &block)
       formatter_class = options.fetch(:with) { StringFormatter }
       
+      if block_given?
+        formatter_class = Class.new(formatter_class, &block)
+      end
+
       define_method formatter_method do |format_string|
         formatter_class.new(self, format_string).to_s
       end
