@@ -36,7 +36,7 @@ class FormatParser
       if match[0]
         match[0]
       else
-        Array( match[1..-1])
+        match[1..-1]
       end
     end
 
@@ -46,7 +46,9 @@ class FormatParser
 
     def escape_regex_fragment
       sorted_sequences = multichar_sequences.sort_by(&:length).reverse
-      components = sorted_sequences << '.'
+      escaped_sequence = sorted_sequences.map { |str| Regexp.escape(str) }
+      components       = escaped_sequence << '.'
+
       components.join '|'
     end
 

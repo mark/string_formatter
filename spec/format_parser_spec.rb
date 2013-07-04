@@ -52,6 +52,25 @@ describe FormatParser do
       subject.parse("%foo").must_equal [['foo']]
     end
 
+    it "should get the longest first" do
+      subject.parse("%foo%fo%f").must_equal [['foo'], ['fo'], ['f']]
+    end
+
   end
+
+  describe "Escaping regex punctuation" do
+
+    class RegexEscapes
+      def escape_sequences; %w(++); end
+    end
+
+    let(:formatter) { RegexEscapes.new }
+
+    it "should not get confused when a regex symbol is an escape char" do
+      subject.parse('%++').must_equal [['++']]
+    end
+
+  end
+
 
 end
