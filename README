@@ -7,6 +7,9 @@ class PersonFormatter < StringFormatter
   f { |p| p.first_name }
   F { |p| p.first_name.upcase }
   l { |p| p.last_name  }
+
+  punctuation
+
   pipe { |p| 'PIPE' }
   
 end
