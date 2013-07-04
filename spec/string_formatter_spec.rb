@@ -2,16 +2,6 @@ require 'spec_helper'
 
 describe StringFormatter do
 
-  class PersonFormatter < StringFormatter    
-    f { |p| p.first_name }
-    F { |p| p.first_name.upcase }
-    l { |p| p.last_name  }
-
-    punctuation
-
-    pipe { |p| 'PIPE' }
-  end
-
   class UpcaseFormatter < StringFormatter
     f { |p| p.first_name.upcase }
     l { |p| p.last_name.upcase  }
@@ -20,7 +10,6 @@ describe StringFormatter do
   Person = Struct.new(:first_name, :last_name) do
     include Formattable
 
-    define_format_string :strf,   :with => PersonFormatter
     define_format_string :strfup, :with => UpcaseFormatter
   end
 
@@ -30,11 +19,24 @@ describe StringFormatter do
     p.strfup('%l, %f').must_equal "SMITH, BOB"
   end
 
-  it "should handle special characters" do
-    p = Person.new("Bob", "Smith")
+  describe "Punctuation formatter" do
+    
+    class PunctuationDummy
+      include Formattable
 
-    p.strf('%l, %f %|').must_equal "Smith, Bob PIPE"
-  end  
+      class PunctuationFormatter < StringFormatter
+        punctuation
+        pipe { |d| "PIPE" }
+      end
+
+      define_format_string :format, with: PunctuationFormatter
+    end
+
+    it "should handle punctuation formats" do
+      PunctuationDummy.new.format('%|').must_equal "PIPE"
+    end
+
+  end
 
   describe "Default formatter" do
 
