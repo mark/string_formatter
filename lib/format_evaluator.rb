@@ -36,19 +36,20 @@ class FormatEvaluator
 
     def behavior_for(format)
       format = format.to_s
-      
+
       evaluations.fetch(format) do
         evaluations[format] = ->(obj) { format }
       end
     end
 
     def evaluate_component(object, component)
-      if component.kind_of? String
-        component
-      elsif component.kind_of? Array
-        evaluate_format(object, *component)
-      else
-        raise ArgumentError, component.inspect
+      case component
+        when String
+          component
+        when Array
+          evaluate_format(object, *component)
+        else
+          raise ArgumentError, component.inspect
       end
     end
 
