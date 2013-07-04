@@ -1,4 +1,6 @@
 require_relative 'formattable'
+require_relative 'format_parser'
+require_relative 'format_evaluator'
 
 class StringFormatter
 
@@ -7,8 +9,6 @@ class StringFormatter
   # Constants #
   #           #
   #############
-  
-  STRING_FORMAT_REGEX = /[^%]+|%./
   
   SPECIAL_CHARACTER_FORMATS = {
     'ampersand'     => '&',
@@ -91,20 +91,19 @@ class StringFormatter
   ####################
   
   def format(object, format_string)
-    split_string = format_string.scan STRING_FORMAT_REGEX
-    
-    split_string.map { |str| translate_component(object, str) }.join
+    parsed_string = parser.parse(format_string)
+
+    evaluator.evaluate(object, parsed_string)
   end
   
   protected
     
-    def translate_component(object, string)
-      if string[0...1] == '%'
-        char = string[1..-1]
-        self.class.escape_character(object, char)
-      else
-        string
-      end
+    def evaluator
+      @evaluator ||= FormatEvaluator.new(self)
     end
-  
+
+    def parser
+      @parser ||= FormatParser.new(self)
+    end
+
 end
