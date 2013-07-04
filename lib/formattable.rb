@@ -8,6 +8,12 @@ module Formattable
       define_method formatter_method do |format_string|
         formatter_class.new(self, format_string).to_s
       end
+
+      if options[:default]
+        define_method :% do |format_string|
+          formatter_class.new(self, format_string).to_s
+        end
+      end
     end
 
   end

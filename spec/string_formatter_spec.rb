@@ -8,7 +8,7 @@ describe StringFormatter do
     l { |p| p.last_name  }
 
     punctuation
-    
+
     pipe { |p| 'PIPE' }
   end
 
@@ -35,5 +35,28 @@ describe StringFormatter do
 
     p.strf('%l, %f %|').must_equal "Smith, Bob PIPE"
   end  
+
+  describe "Default formatter" do
+
+    class DefaultDummy
+      include Formattable
+
+      class DefaultFormatter < StringFormatter; b { |d| "Default" }; end
+
+      define_format_string :format, with: DefaultFormatter, default: true
+    end
+
+    subject { DefaultDummy.new }
+
+    it "should work with %" do
+      string = subject % "%b"
+      string.must_equal "Default"
+    end
+    
+    it "should still work with the named method" do
+      string = subject.format "%b"
+      string.must_equal "Default"
+    end
+  end
 
 end
