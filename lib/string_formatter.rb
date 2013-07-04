@@ -56,17 +56,6 @@ class StringFormatter
     'zero'          => '0'
   }.freeze
   
-  ###############
-  #             #
-  # Constructor #
-  #             #
-  ###############
-  
-  def initialize(object, format_string)
-    @object = object
-    @format_string = format_string
-  end
-  
   #################
   #               #
   # Class Methods #
@@ -101,19 +90,21 @@ class StringFormatter
   #                  #
   ####################
   
-  def to_s
-    split_string = @format_string.scan STRING_FORMAT_REGEX
+  def format(object, format_string)
+    split_string = format_string.scan STRING_FORMAT_REGEX
     
-    split_string.map { |str| translate_component(str) }.join
+    split_string.map { |str| translate_component(object, str) }.join
   end
   
-  def translate_component(string)
-    if string[0...1] == '%'
-      char = string[1..-1]
-      self.class.escape_character(@object, char)
-    else
-      string
+  protected
+    
+    def translate_component(object, string)
+      if string[0...1] == '%'
+        char = string[1..-1]
+        self.class.escape_character(object, char)
+      else
+        string
+      end
     end
-  end
   
 end
