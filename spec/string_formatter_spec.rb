@@ -5,8 +5,8 @@ describe StringFormatter do
   describe "Basic behavior" do
 
     class UpcaseFormatter < StringFormatter
-      f { |p| p.first_name.upcase }
-      l { |p| p.last_name.upcase  }
+      f { first_name.upcase }
+      l { last_name.upcase  }
     end
 
     Person = Struct.new(:first_name, :last_name) do
@@ -30,7 +30,7 @@ describe StringFormatter do
 
       class PunctuationFormatter < StringFormatter
         punctuation
-        pipe { |d| "PIPE" }
+        pipe { "PIPE" }
       end
 
       define_format_string :format, with: PunctuationFormatter
@@ -47,7 +47,7 @@ describe StringFormatter do
     class DefaultDummy
       include Formattable
 
-      class DefaultFormatter < StringFormatter; b { |d| "Default" }; end
+      class DefaultFormatter < StringFormatter; b { "Default" }; end
 
       define_format_string :format, with: DefaultFormatter, default: true
     end
@@ -71,13 +71,13 @@ describe StringFormatter do
       include Formattable
 
       define_format_string :strf do
-        f { |d| "Foo" }
+        f { "Foo" }
       end
 
-      class InheritableFormatter < StringFormatter; a { |d| "Foo" }; end
+      class InheritableFormatter < StringFormatter; a { "Foo" }; end
 
       define_format_string :strf2, with: InheritableFormatter do
-        b { |d| "Bar" }
+        b { "Bar" }
       end
     end
 
@@ -96,7 +96,7 @@ describe StringFormatter do
     class MulticharDummy
       include Formattable
       class MulticharFormatter < StringFormatter
-        foo { |d| "FOO" }
+        foo { "FOO" }
       end
       
       define_format_string :format, with: MulticharFormatter

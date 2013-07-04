@@ -38,7 +38,7 @@ class FormatEvaluator
       format = format.to_s
 
       evaluations.fetch(format) do
-        evaluations[format] = ->(obj) { format }
+        evaluations[format] = ->() { format }
       end
     end
 
@@ -53,10 +53,10 @@ class FormatEvaluator
       end
     end
 
-    def evaluate_format(object, format, options = nil)
+    def evaluate_format(object, format, *options)
       behavior = behavior_for(format)
 
-      behavior[object]
+      object.instance_exec(*options, &behavior)
     end
 
 end
