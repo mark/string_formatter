@@ -2,13 +2,9 @@ require 'spec_helper'
 
 describe FormatParser do
 
-  class NoEscapes
-    def escape_sequences; []; end
-  end
+  let(:escapes) { [] }
 
-  let(:formatter) { NoEscapes.new }
-
-  subject { FormatParser.new(formatter) }
+  subject { FormatParser.new(escapes) }
 
   it "should keep characters together" do
     subject.parse("foo").must_equal ["foo"]
@@ -28,11 +24,7 @@ describe FormatParser do
 
   describe "Simple multicharacter escapes" do
 
-    class MulticharEscapes
-      def escape_sequences; ['foo']; end
-    end
-
-    let(:formatter) { MulticharEscapes.new }
+    let(:escapes) { %w(foo) }
 
     it "should handle multiformat escapes" do
       subject.parse("%foo").must_equal [['foo']]
@@ -42,11 +34,7 @@ describe FormatParser do
 
   describe "Greedy multicharacter escapes" do
 
-    class GreedyMulticharEscapes
-      def escape_sequences; %w(f fo foo); end
-    end
-
-    let(:formatter) { GreedyMulticharEscapes.new }
+    let(:escapes) { %w(f fo foo) }
 
     it "should handle multiformat escapes" do
       subject.parse("%foo").must_equal [['foo']]
@@ -60,11 +48,7 @@ describe FormatParser do
 
   describe "Escaping regex punctuation" do
 
-    class RegexEscapes
-      def escape_sequences; %w(++); end
-    end
-
-    let(:formatter) { RegexEscapes.new }
+    let(:escapes) { %w(++) }
 
     it "should not get confused when a regex symbol is an escape char" do
       subject.parse('%++').must_equal [['++']]

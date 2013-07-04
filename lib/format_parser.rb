@@ -6,7 +6,7 @@ class FormatParser
   #              #
   ################
   
-  attr_reader :formatter
+  attr_reader :escape_sequences
 
   ###############
   #             #
@@ -14,8 +14,8 @@ class FormatParser
   #             #
   ###############
   
-  def initialize(formatter)
-    @formatter = formatter
+  def initialize(escape_sequences)
+    @escape_sequences = escape_sequences
   end
 
   ####################
@@ -41,7 +41,7 @@ class FormatParser
     end
 
     def multichar_sequences
-      formatter.escape_sequences.select { |seq| seq.length > 1 }
+      escape_sequences.select { |seq| seq.length > 1 }
     end
 
     def escape_regex_fragment
