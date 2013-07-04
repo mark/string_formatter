@@ -2,21 +2,25 @@ require 'spec_helper'
 
 describe StringFormatter do
 
-  class UpcaseFormatter < StringFormatter
-    f { |p| p.first_name.upcase }
-    l { |p| p.last_name.upcase  }
-  end
+  describe "Basic behavior" do
 
-  Person = Struct.new(:first_name, :last_name) do
-    include Formattable
+    class UpcaseFormatter < StringFormatter
+      f { |p| p.first_name.upcase }
+      l { |p| p.last_name.upcase  }
+    end
 
-    define_format_string :strfup, :with => UpcaseFormatter
-  end
+    Person = Struct.new(:first_name, :last_name) do
+      include Formattable
 
-  it "should generate the right string format" do
-    p = Person.new("Bob", "Smith")
+      define_format_string :strfup, :with => UpcaseFormatter
+    end
 
-    p.strfup('%l, %f').must_equal "SMITH, BOB"
+    it "should generate the right string format" do
+      p = Person.new("Bob", "Smith")
+
+      p.strfup('%l, %f').must_equal "SMITH, BOB"
+    end
+
   end
 
   describe "Punctuation formatter" do
