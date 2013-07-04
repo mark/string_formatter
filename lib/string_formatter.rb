@@ -10,7 +10,7 @@ class StringFormatter
   #           #
   #############
   
-  SPECIAL_CHARACTER_FORMATS = {
+  PUNCTUATION_FORMATS = {
     'ampersand'     => '&',
     'at'            => '@',
     'backslash'     => '\\',
@@ -62,40 +62,61 @@ class StringFormatter
   #               #
   #################
   
-  def self.escape_character(object, char)
-    escape_method = @escapes[char]
-    escape_method ? escape_method[object] : char
-  end
-  
-  def self.method_missing(meth, *args, &block)
-    str = meth.to_s
-    if str.length == 1
-      @escapes ||= {}
-      @escapes[str] = block
-    elsif @parsing_punctuation && SPECIAL_CHARACTER_FORMATS[str]
-      @escapes ||= {}
-      @escapes[ SPECIAL_CHARACTER_FORMATS[str] ] = block
-    else
-      super
+  def self.method_missing(escape_sequence, *args, &behavior)
+    super unless behavior
+
+    if escaping_as_punctuation? && valid_punctuation_sequence?(escape_sequence)
+      escape_sequence = characters_for_punctuation_sequence(escape_sequence)
     end
+
+    escape(escape_sequence, behavior)
   end
 
   def self.punctuation
     @parsing_punctuation = true
   end
 
+  protected
+
+    def self.characters_for_punctuation_sequence(sequence)
+      PUNCTUATION_FORMATS.fetch(sequence.to_s)
+    end
+
+    def self.escape(escape_sequence, behavior)
+      escapes[escape_sequence.to_s] = behavior
+    end
+
+    def self.escapes
+      @escapes ||= {}
+    end
+
+    def self.escaping_as_punctuation?
+      @parsing_punctuation
+    end
+
+    def self.valid_punctuation_sequence?(sequence)
+      PUNCTUATION_FORMATS.include? sequence.to_s
+    end
+
+  public
+  
   ####################
   #                  #
   # Instance Methods #
   #                  #
   ####################
+
+  def escape(object, format_string)
+    escape_method = self.class.escapes[format_string]
+    escape_method ? escape_method[object] : format_string
+  end
   
   def format(object, format_string)
     parsed_string = parser.parse(format_string)
 
     evaluator.evaluate(object, parsed_string)
   end
-  
+
   protected
     
     def evaluator

@@ -45,7 +45,7 @@ class FormatEvaluator
     end
 
     def evaluate_format(object, format, options = nil)
-      formatter.class.escape_character(object, format)
+      formatter.escape(object, format)
     end
 
 end

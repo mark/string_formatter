@@ -3,7 +3,7 @@ require 'spec_helper'
 describe FormatEvaluator do
 
   class DummyFormatter
-    def self.escape_character(object, char)
+    def escape(object, char)
       "<#{char}>"
     end
   end
