@@ -3,32 +3,45 @@ module Formattable
   module ClassMethods
 
     def define_format_string(meth, options = {}, &block)
-      formatter_class = options.fetch(:with) { StringFormatter }
-      
-      if block_given?
-        formatter_class = Class.new(formatter_class, &block)
-      end
+      base_class = options.fetch(:with) { StringFormatter }
+      klass      = formatter_class(base_class, block)
 
-      set_formatter meth, formatter_class.new
+      set_formatter_for meth, klass
       
-      define_method meth do |format_string|
-        formatter = self.class.formatter(meth)
-        formatter.format(self, format_string)
-      end
+      define_formatter_method(meth)
 
-      alias_method(:%, meth) if options[:default]
+      define_default_alias(meth) if options[:default]
     end
 
-    def formatter(meth)
+    def formatter_for(meth)
       @formatters ||= {}
       @formatters[meth]
     end
 
     protected
 
-      def set_formatter(meth, formatter)
+      def define_default_alias(meth)
+        alias_method :%, meth
+      end
+
+      def define_formatter_method(meth)
+        define_method(meth) do |format_string|
+          formatter = self.class.formatter_for meth
+          formatter.format(self, format_string)
+        end
+      end
+
+      def formatter_class(superclass, definition)
+        if definition
+          Class.new(superclass, &definition)
+        else
+          superclass
+        end
+      end
+
+      def set_formatter_for(meth, formatter_class)
         @formatters ||= {}
-        @formatters[meth] = formatter
+        @formatters[meth] = formatter_class.new
       end
 
   end
