@@ -4,21 +4,22 @@ describe StringFormatter do
 
   describe "Basic behavior" do
 
-    class UpcaseFormatter < StringFormatter
-      f { first_name.upcase }
-      l { last_name.upcase  }
+    class PersonFormatter < StringFormatter
+      f { first_name }
+      l { last_name  }
     end
 
     Person = Struct.new(:first_name, :last_name) do
       include Formattable
 
-      define_format_string :strfup, :with => UpcaseFormatter
+      define_format_string :format, :with => PersonFormatter
     end
 
     it "should generate the right string format" do
       p = Person.new("Bob", "Smith")
 
-      p.strfup('%l, %f').must_equal "SMITH, BOB"
+      p.format('%f %l').must_equal "Bob Smith"
+      p.format('%l, %f').must_equal "Smith, Bob"
     end
 
   end
