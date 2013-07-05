@@ -1,5 +1,7 @@
 StringFormatter is a method for defining custom strf-style methods for your object.
 
+* string_formatter require Ruby 1.9 or higher *
+
 Example:
 
 class PersonFormatter < StringFormatter
