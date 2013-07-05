@@ -119,11 +119,6 @@ class StringFormatter
   #                  #
   ####################
 
-  def escape(object, format_string)
-    escape_method = self.class.escapes[format_string]
-    escape_method ? escape_method[object] : format_string
-  end
-  
   def format(object, format_string)
     parsed_string = parser.parse(format_string)
 
