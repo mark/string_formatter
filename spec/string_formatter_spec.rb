@@ -109,5 +109,27 @@ describe StringFormatter do
 
   end
 
+  describe "Formatters with options" do
+    class OptionDummy
+      include Formattable
+      class OptionFormatter < StringFormatter
+        a(/\d/) { |n| "A[#{n}]" }
+      end
+
+      define_format_string :format, with: OptionFormatter
+    end
+
+    subject { OptionDummy.new }
+
+    it "should pass in the option when one is provided" do
+      subject.format('%1a').must_equal "A[1]"
+    end
+
+    it "should not use the option when it isn't valid" do
+      subject.format('%xa').must_equal "xa"
+    end
+
+  end
+
 
 end

@@ -61,7 +61,8 @@ describe FormatEvaluator do
 
     let(:evaluations) do
       { 'a' => ->(opt)   { opt },
-        'b' => ->(*opts) { opts.length } }
+        'b' => ->(*opts) { opts.length },
+        'c' => ->()      { 'C' } }
     end
 
     it "should accept escape options" do
@@ -70,6 +71,11 @@ describe FormatEvaluator do
 
     it "should accept multiple options" do
       subject.evaluate(nil, [['b', 'foo'], ' ', ['b', 'foo', 'bar']]).must_equal '1 2'
+    end
+
+    it "should not complain if there are the wrong # of options" do
+      skip # I'm not sure if I want this test to be valid...
+      subject.evaluate(nil, [['c'], ['c', 1]]).must_equal 'CC'
     end
 
   end
