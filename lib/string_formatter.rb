@@ -1,6 +1,6 @@
-require_relative 'formattable'
-require_relative 'format_parser'
-require_relative 'format_evaluator'
+require './lib/formattable'
+require './lib/format_parser'
+require './lib/format_evaluator'
 
 class StringFormatter
 
