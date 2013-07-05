@@ -73,7 +73,8 @@ class StringFormatter
       escape_sequence = characters_for_punctuation_sequence(escape_sequence)
     end
 
-    escape(escape_sequence, behavior)
+    set_escape(escape_sequence, behavior)
+    set_escape_options(escape_sequence, args.first) if args.length > 0
   end
 
   def self.punctuation
@@ -86,16 +87,24 @@ class StringFormatter
       PUNCTUATION_FORMATS.fetch(sequence.to_s)
     end
 
-    def self.escape(escape_sequence, behavior)
-      escapes[escape_sequence.to_s] = behavior
-    end
-
     def self.escapes
       @escapes ||= {}
     end
 
+    def self.escape_options
+      @escape_options ||= {}
+    end
+
     def self.escaping_as_punctuation?
       @parsing_punctuation
+    end
+
+    def self.set_escape(escape_sequence, behavior)
+      escapes[escape_sequence.to_s] = behavior
+    end
+
+    def self.set_escape_options(escape_sequence, options_regex)
+      escape_options[escape_sequence.to_s] = options_regex
     end
 
     def self.valid_punctuation_sequence?(sequence)
@@ -123,10 +132,14 @@ class StringFormatter
 
   protected
     
+    def escape_options
+      self.class.escape_options
+    end
+    
     def escape_sequences
       self.class.escapes.keys
     end
-    
+
     def evaluations
       self.class.escapes
     end
@@ -136,7 +149,7 @@ class StringFormatter
     end
 
     def parser
-      @parser ||= FormatParser.new(escape_sequences)
+      @parser ||= FormatParser.new(escape_sequences, escape_options)
     end
 
 end
